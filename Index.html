@@ -1630,6 +1630,310 @@ p {
     color: var(--color-accent);
 }
 
+/* ==========================================================================
+   SALES CHATBOT WIDGET
+   ========================================================================== */
+.zalo-float {
+    right: 96px;
+}
+
+.cv-chatbot {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 10000;
+    font-family: var(--font-body);
+}
+
+.cv-chatbot-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: var(--color-white);
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(44, 117, 83, 0.45);
+    transition: var(--transition-normal);
+    position: relative;
+}
+
+.cv-chatbot-toggle:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(44, 117, 83, 0.5);
+}
+
+.cv-chatbot-toggle svg {
+    width: 28px;
+    height: 28px;
+}
+
+.cv-chatbot-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+    background: var(--color-accent);
+    border: 2px solid var(--color-white);
+    border-radius: 50%;
+    animation: cvChatPulse 2s infinite;
+}
+
+@keyframes cvChatPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.cv-chatbot-window {
+    position: absolute;
+    bottom: 72px;
+    right: 0;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    height: 520px;
+    max-height: calc(100vh - 120px);
+    background: var(--color-white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-luxury);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px) scale(0.96);
+    transition: var(--transition-normal);
+    border: 1px solid rgba(44, 117, 83, 0.12);
+}
+
+.cv-chatbot.open .cv-chatbot-window {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.cv-chatbot.open .cv-chatbot-toggle {
+    background: var(--color-primary-dark);
+}
+
+.cv-chatbot-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: var(--color-white);
+    padding: 1rem 1.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.cv-chatbot-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.cv-chatbot-header-info h4 {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.cv-chatbot-header-info p {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+.cv-chatbot-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--color-white);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.85;
+    padding: 0;
+}
+
+.cv-chatbot-close:hover {
+    opacity: 1;
+}
+
+.cv-chatbot-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: var(--color-bg);
+}
+
+.cv-chatbot-msg {
+    max-width: 88%;
+    padding: 0.7rem 0.9rem;
+    border-radius: 14px;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    word-wrap: break-word;
+}
+
+.cv-chatbot-msg.bot {
+    align-self: flex-start;
+    background: var(--color-white);
+    color: var(--color-text-dark);
+    border-bottom-left-radius: 4px;
+    box-shadow: var(--shadow-sm);
+}
+
+.cv-chatbot-msg.user {
+    align-self: flex-end;
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-bottom-right-radius: 4px;
+}
+
+.cv-chatbot-msg.typing {
+    align-self: flex-start;
+    background: var(--color-white);
+    color: var(--color-text-muted);
+    font-style: italic;
+    box-shadow: var(--shadow-sm);
+}
+
+.cv-chatbot-msg strong {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+.cv-chatbot-msg.user strong {
+    color: var(--color-white);
+}
+
+.cv-chatbot-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0 1rem 0.75rem;
+    background: var(--color-bg);
+    flex-shrink: 0;
+}
+
+.cv-chatbot-quick-btn {
+    background: var(--color-white);
+    border: 1px solid rgba(44, 117, 83, 0.25);
+    color: var(--color-primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.4rem 0.65rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    font-family: var(--font-body);
+}
+
+.cv-chatbot-quick-btn:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+}
+
+.cv-chatbot-cta {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.55rem 1rem;
+    background: linear-gradient(135deg, hsl(38, 65%, 52%) 0%, hsl(38, 65%, 42%) 100%);
+    color: var(--color-white);
+    font-weight: 700;
+    font-size: 0.82rem;
+    border-radius: 50px;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(200, 150, 62, 0.35);
+    transition: var(--transition-fast);
+}
+
+.cv-chatbot-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(200, 150, 62, 0.45);
+    color: var(--color-white);
+}
+
+.cv-chatbot-input-area {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(44, 117, 83, 0.1);
+    background: var(--color-white);
+    flex-shrink: 0;
+}
+
+.cv-chatbot-input {
+    flex: 1;
+    border: 1px solid rgba(44, 117, 83, 0.2);
+    border-radius: 24px;
+    padding: 0.55rem 1rem;
+    font-size: 0.875rem;
+    font-family: var(--font-body);
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+.cv-chatbot-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(44, 117, 83, 0.12);
+}
+
+.cv-chatbot-send {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--color-white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition-fast);
+}
+
+.cv-chatbot-send:hover {
+    background: var(--color-primary-dark);
+}
+
+@media (max-width: 480px) {
+    .cv-chatbot-window {
+        width: calc(100vw - 24px);
+        right: -8px;
+        height: 70vh;
+    }
+
+    .zalo-float {
+        right: 88px;
+        bottom: 20px;
+    }
+
+    .cv-chatbot {
+        bottom: 20px;
+        right: 16px;
+    }
+}
+
 </style>
 </head>
 <body>
@@ -2202,6 +2506,32 @@ p {
         <span class="zalo-float-label">Zalo 24/7</span>
     </div>
 
+    <!-- Sales Chatbot Widget -->
+    <div id="cvChatbot" class="cv-chatbot" aria-live="polite">
+        <div class="cv-chatbot-window" role="dialog" aria-label="Tư vấn CornerVillas">
+            <div class="cv-chatbot-header">
+                <div class="cv-chatbot-avatar" aria-hidden="true">🌿</div>
+                <div class="cv-chatbot-header-info">
+                    <h4>CornerVillas Thanh Liên 91</h4>
+                    <p>Tư vấn viên • Trả lời ngay</p>
+                </div>
+                <button type="button" class="cv-chatbot-close" aria-label="Đóng chat">&times;</button>
+            </div>
+            <div id="cvChatMessages" class="cv-chatbot-messages"></div>
+            <div id="cvChatQuick" class="cv-chatbot-quick"></div>
+            <div class="cv-chatbot-input-area">
+                <input type="text" id="cvChatInput" class="cv-chatbot-input" placeholder="Nhập câu hỏi của bạn..." autocomplete="off">
+                <button type="button" id="cvChatSend" class="cv-chatbot-send" aria-label="Gửi tin nhắn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <button type="button" id="cvChatToggle" class="cv-chatbot-toggle" aria-label="Mở chat tư vấn">
+            <span class="cv-chatbot-badge" aria-hidden="true"></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </button>
+    </div>
+
     <!-- Booking Modal -->
     <div id="bookingModal" class="booking-modal-overlay">
         <div class="booking-modal-container">
@@ -2536,6 +2866,206 @@ document.addEventListener('DOMContentLoaded', () => {
         checkInInput.value = `${yyyy}-${mm}-${dd}`;
         checkInInput.min = `${yyyy}-${mm}-${dd}`; // Restrict selecting past dates
     }
+
+
+    /* ==========================================================================
+       6. SALES CHATBOT (sales_script.md)
+       ========================================================================== */
+    const cvChatbot = document.getElementById('cvChatbot');
+    const cvChatToggle = document.getElementById('cvChatToggle');
+    const cvChatClose = cvChatbot.querySelector('.cv-chatbot-close');
+    const cvChatMessages = document.getElementById('cvChatMessages');
+    const cvChatQuick = document.getElementById('cvChatQuick');
+    const cvChatInput = document.getElementById('cvChatInput');
+    const cvChatSend = document.getElementById('cvChatSend');
+
+    const CV_CHAT_SCRIPTS = {
+        greeting: 'Ting ting! 🌟 Em chào anh/chị ạ! Hệ thống đã ghi nhận yêu cầu nhận ưu đãi đặt sớm biệt thự nguyên căn Thanh Liên 91 của anh/chị.<br><br>Chỉ mất 30 giây để em giữ lịch trống và ưu đãi tốt nhất cho mình thôi ạ. Không biết đoàn mình định đi ngày trong tuần hay cuối tuần để em check quỹ căn và gửi ngay mức giá tốt nhất cho mình nhé ạ? 👉',
+        vitri: 'Dạ, Vườn Vua Resort nằm ở Thanh Thủy, Phú Thọ, ngay sát Ba Vì nên chỉ cách trung tâm Hà Nội khoảng <strong>65 - 70km (tầm 1.5 tiếng lái xe)</strong> thôi anh/chị ơi. Đường đi toàn bộ là đường bằng phẳng, rất đẹp và dễ đi.<br><br>Căn <strong>CornerVillas - Thanh Liên 91</strong> nhà em nằm ở vị trí góc đắc địa nhất nhì resort, đi bộ 1-2 phút là ra bể bơi Phố Tây hoặc bể vô cực Palm Gardens. Bên em cũng chuẩn bị sẵn <strong>6 xe đạp địa hình miễn phí</strong> tại villa để cả nhà tha hồ dạo chơi quanh resort nữa đó ạ! 🚴‍♂️',
+        succhua: 'Dạ anh/chị ơi, biệt thự nguyên căn Thanh Liên 91 có 4 phòng ngủ khép kín rộng rãi, sức chứa tiêu chuẩn thoải mái cho <strong>8 người lớn và 4 trẻ em dưới 6 tuổi</strong> (phù hợp cho đoàn từ 12 - 15 người).<br><br>Nếu đoàn mình đi đông hơn tiêu chuẩn (từ người thứ 13 trở lên), bên em có phụ thu:<br>• Người lớn (từ 12 tuổi): <strong>300.000đ/người/đêm</strong><br>• Trẻ em (6 - dưới 12 tuổi): <strong>150.000đ/bé/đêm</strong><br>• Bé dưới 6 tuổi: <strong>Miễn phí</strong> ạ.',
+        khoang: 'Dạ đây chính là đặc quyền lớn nhất khi anh/chị ở tại Thanh Liên 91 đấy ạ! Nước khoáng nóng tại villa nhà em được dẫn trực tiếp từ mạch ngầm tự nhiên Thanh Thủy vào bể ngâm riêng biệt khép kín ngay trong nhà.<br><br>Anh/chị và gia đình được ngâm tắm khoáng nóng Radon trị liệu riêng tư bất kể lúc nào mà <strong>hoàn toàn miễn phí, không giới hạn lượt ngâm</strong>. Không cần mua vé (tiết kiệm 150k - 200k/vé/người) và cũng không phải chen chúc tại bể công cộng đâu ạ!',
+        hobo: 'Dạ có chứ ạ! Biệt thự Thanh Liên 91 có thiết kế một <strong>bể bơi ngoài trời riêng biệt</strong> ngay trong khuôn viên sân vườn của nhà mình. Cả gia đình có thể thoải mái bơi lội riêng tư mà không lo bị làm phiền.<br><br>Ngoài ra, vé nghỉ dưỡng đã bao gồm quyền sử dụng các bể bơi lớn tại khu Phố Tây hoặc bể vô cực Palm Gardens ngay bên cạnh villa ạ! 🏊‍♂️',
+        nauan: 'Dạ hoàn toàn được và cực kỳ thoải mái luôn anh/chị nhé! Bếp tại CornerVillas được trang bị đầy đủ tiện nghi: tủ lạnh lớn, bếp từ hiện đại, nồi cơm điện, có sẵn cả <strong>nồi nấu lẩu chuyên dụng</strong> và đầy đủ bát đũa setup cho đoàn 12 người.<br><br>Sân vườn rất rộng, anh/chị có thể tổ chức lẩu ấm cúng hoặc tiệc nướng BBQ ngoài trời cực kỳ vui vẻ và tiết kiệm ạ!',
+        dondep: 'Dạ, nếu sau khi ăn uống nấu nướng xong, đoàn mình tự dọn dẹp và rửa bát đũa sạch sẽ thì villa <strong>hoàn toàn không thu thêm bất kỳ khoản phí phụ thu nào</strong> ạ.<br><br>Còn nếu anh/chị muốn dành trọn thời gian nghỉ ngơi, bên em có hỗ trợ quản gia dọn dẹp thay với phí rất hữu nghị, chỉ từ <strong>200.000đ - 300.000đ/bữa</strong> thôi ạ!',
+        gia: 'Dạ, vì anh/chị liên hệ đặt phòng trực tiếp chính chủ nên em cam kết mức giá tốt nhất thị trường luôn ạ. Hiện tại bên em đang áp dụng ưu đãi đặt sớm cực kỳ hấp dẫn:<br><br>• <strong>Gói ngày trong tuần (T2 - T5):</strong> Giảm còn <strong>2.990.000đ/đêm nguyên căn</strong> (Tiết kiệm 33%)<br>• <strong>Gói cuối tuần (T6, T7, CN):</strong> Giảm còn <strong>4.890.000đ/đêm nguyên căn</strong> (Gói hot, thường hết phòng sớm)<br>• <strong>Quà tặng:</strong> Set trà, cafe, nước lọc; miễn phí 6 xe đạp; hỗ trợ đổi ngày linh hoạt ạ!',
+        gia_cao: 'Dạ em rất hiểu băn khoăn của chị ạ. Mức giá 2.990.000đ (ngày thường) chia cho đoàn 12 người thì tính ra <strong>chỉ khoảng 250k/người/đêm</strong> thôi ạ — rẻ hơn nhiều so với thuê 4 phòng khách sạn lẻ.<br><br>Đặc biệt, nước khoáng nóng Radon được dẫn thẳng vào bể ngâm trong nhà, tiết kiệm gần 2 triệu tiền vé tắm khoáng. Chưa kể được tự nấu ăn, BBQ sân vườn thoải mái. Tính đi tính lại thì thuê nguyên căn Thanh Liên 91 cực kỳ kinh tế và riêng tư ạ! 🥰',
+        thoitiet: 'Dạ ngược lại hoàn toàn luôn anh/chị ơi! Mùa thu đông se se lạnh mới chính là thời điểm tuyệt vời nhất để trải nghiệm <strong>khoáng nóng Radon trị liệu</strong> đấy ạ!<br><br>Giữa tiết trời se lạnh, cả nhà được ngâm mình trong bể khoáng nóng ấm áp 37 - 40°C khép kín ngay trong biệt thự thì không gì sướng bằng. Cực kỳ tốt cho sức khỏe xương khớp và thư giãn sau những ngày làm việc căng thẳng ạ!',
+        coc: 'Dạ, để đảm bảo lịch trống chắc chắn được giữ riêng cho đoàn mình (vì bên em chỉ có duy nhất một căn góc Thanh Liên 91), villa áp dụng đặt cọc linh hoạt khoảng <strong>30 - 50%</strong> giá trị phòng ạ.<br><br>• <strong>Đổi ngày:</strong> Miễn phí nếu báo trước ít nhất 7 ngày<br>• <strong>Hủy phòng:</strong> Bảo lưu hoặc hoàn cọc theo thỏa thuận rõ ràng<br><br>Khi đăng ký giữ chỗ, mình không cần chuyển khoản ngay — em sẽ gọi tư vấn chi tiết rồi mới làm thủ tục đặt cọc ạ!',
+        closing: 'Dạ anh/chị ơi, hiện tại căn CornerVillas Thanh Liên 91 đang có đoàn khác cũng đang hỏi lịch đấy ạ. Vì nhà em là căn góc VIP có bể ngâm khoáng nóng riêng khép kín nên lịch cuối tuần thường hết rất nhanh.<br><br>Để không bị lỡ chuyến đi nghỉ dưỡng của cả nhà, em hỗ trợ làm thủ tục giữ chỗ ưu đãi cho mình ngay nhé ạ. Anh/chị chỉ cần điền nhanh thông tin vào form bên dưới, em sẽ gọi tư vấn và giữ phòng cho mình trong hôm nay! 🥰',
+        nurturing: 'Dạ em hiểu là chuyến đi của cả nhà cần bàn bạc kỹ để thống nhất lịch ạ. Không sao đâu anh/chị nhé! 🥰<br><br>Để khi nào nhà mình chốt được lịch hoặc có chương trình flash sale, em có thể gửi thông tin sớm nhất. Anh/chị dành ra 30 giây điền giúp em thông tin liên hệ vào form ngắn — ngay sau khi điền, hệ thống sẽ tặng anh/chị <strong>Voucher giảm giá 200k</strong> cho lần đặt phòng đầu tiên ạ!',
+        fallback: 'Dạ em cảm ơn anh/chị đã quan tâm ạ! Em có thể tư vấn thêm về vị trí, sức chứa, khoáng nóng, hồ bơi, giá ưu đãi hoặc hỗ trợ đặt phòng. Anh/chị chọn câu hỏi bên dưới hoặc nhập trực tiếp nhé ạ!'
+    };
+
+    const CV_QUICK_OPTIONS = [
+        { label: '📍 Vị trí', topic: 'vitri' },
+        { label: '👨‍👩‍👧‍👦 Sức chứa', topic: 'succhua' },
+        { label: '♨️ Khoáng nóng', topic: 'khoang' },
+        { label: '🏊 Hồ bơi', topic: 'hobo' },
+        { label: '💰 Giá ưu đãi', topic: 'gia' },
+        { label: '✅ Đặt phòng', topic: 'book' },
+        { label: '🤔 Cần suy nghĩ', topic: 'think' }
+    ];
+
+    const CV_KEYWORD_MAP = [
+        { keys: ['vị trí', 'vi tri', 'ở đâu', 'o dau', 'xa không', 'đi bằng', 'hà nội', 'ha noi', 'thanh thủy', 'ba vì'], topic: 'vitri' },
+        { keys: ['bao nhiêu người', 'sức chứa', 'suc chua', 'phòng ngủ', 'phong ngu', 'đi đông', 'phụ thu'], topic: 'succhua' },
+        { keys: ['khoáng', 'khoang', 'radon', 'ngâm', 'ngam', 'tắm khoáng', 'tam khoang', 'nước nóng'], topic: 'khoang' },
+        { keys: ['hồ bơi', 'ho boi', 'bể bơi', 'be boi', 'bơi lội'], topic: 'hobo' },
+        { keys: ['nấu ăn', 'nau an', 'bbq', 'lẩu', 'lau', 'bếp', 'mang đồ ăn'], topic: 'nauan' },
+        { keys: ['dọn dẹp', 'don dep', 'rửa bát', 'rua bat', 'phụ thu dọn'], topic: 'dondep' },
+        { keys: ['giá cao', 'gia cao', 'đắt', 'dat', 'mắc', 'mac', 'so sánh'], topic: 'gia_cao' },
+        { keys: ['mùa thu', 'mua thu', 'mùa đông', 'mua dong', 'lạnh', 'lanh', 'thu đông', 'thu dong', 'thời tiết', 'thoi tiet'], topic: 'thoitiet' },
+        { keys: ['cọc', 'coc', 'hủy', 'huy', 'đổi ngày', 'doi ngay', 'hoàn tiền', 'hoan tien'], topic: 'coc' },
+        { keys: ['giá', 'gia', 'bao nhiêu', 'bao nhieu', 'ưu đãi', 'uu dai', 'giảm giá'], topic: 'gia' },
+        { keys: ['đặt phòng', 'dat phong', 'giữ chỗ', 'giu cho', 'chốt', 'chot', 'muốn đặt', 'muon dat', 'book', 'mua', 'đăng ký đặt'], topic: 'book' },
+        { keys: ['suy nghĩ', 'suy nghi', 'hỏi gia đình', 'hoi gia dinh', 'chưa quyết', 'chua quyet', 'để sau', 'de sau', 'chưa chốt'], topic: 'think' }
+    ];
+
+    let cvChatStarted = false;
+    let cvChatBusy = false;
+
+    function cvScrollChat() {
+        cvChatMessages.scrollTop = cvChatMessages.scrollHeight;
+    }
+
+    function cvAddMessage(text, type, withCta) {
+        const msg = document.createElement('div');
+        msg.className = 'cv-chatbot-msg ' + type;
+        msg.innerHTML = text;
+        if (withCta) {
+            const cta = document.createElement('a');
+            cta.href = '#lead-form';
+            cta.className = 'cv-chatbot-cta';
+            cta.textContent = '📝 Đăng ký danh sách chờ & Nhận Voucher 200k';
+            cta.addEventListener('click', () => {
+                cvChatbot.classList.remove('open');
+                setTimeout(() => {
+                    document.getElementById('lead-form').scrollIntoView({ behavior: 'smooth' });
+                }, 300);
+            });
+            msg.appendChild(document.createElement('br'));
+            msg.appendChild(cta);
+        }
+        cvChatMessages.appendChild(msg);
+        cvScrollChat();
+    }
+
+    function cvShowTyping() {
+        const el = document.createElement('div');
+        el.className = 'cv-chatbot-msg typing';
+        el.id = 'cvTyping';
+        el.textContent = 'Đang nhập...';
+        cvChatMessages.appendChild(el);
+        cvScrollChat();
+    }
+
+    function cvHideTyping() {
+        const el = document.getElementById('cvTyping');
+        if (el) el.remove();
+    }
+
+    function cvRenderQuick(options) {
+        cvChatQuick.innerHTML = '';
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'cv-chatbot-quick-btn';
+            btn.textContent = opt.label;
+            btn.addEventListener('click', () => cvHandleTopic(opt.topic, opt.label));
+            cvChatQuick.appendChild(btn);
+        });
+    }
+
+    function cvBotReply(topic) {
+        if (topic === 'book') {
+            return { text: CV_CHAT_SCRIPTS.closing, cta: true };
+        }
+        if (topic === 'think') {
+            return { text: CV_CHAT_SCRIPTS.nurturing, cta: true };
+        }
+        return { text: CV_CHAT_SCRIPTS[topic] || CV_CHAT_SCRIPTS.fallback, cta: false };
+    }
+
+    function cvMatchTopic(input) {
+        const lower = input.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        for (const entry of CV_KEYWORD_MAP) {
+            for (const key of entry.keys) {
+                const normalizedKey = key.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                if (lower.includes(normalizedKey)) {
+                    return entry.topic;
+                }
+            }
+        }
+        return null;
+    }
+
+    function cvHandleTopic(topic, userLabel) {
+        if (cvChatBusy) return;
+        cvChatBusy = true;
+
+        if (userLabel) {
+            cvAddMessage(userLabel, 'user');
+        }
+
+        cvShowTyping();
+        setTimeout(() => {
+            cvHideTyping();
+            const reply = cvBotReply(topic);
+            cvAddMessage(reply.text, 'bot', reply.cta);
+
+            if (reply.cta) {
+                cvRenderQuick([
+                    { label: '💰 Xem giá ưu đãi', topic: 'gia' },
+                    { label: '♨️ Khoáng nóng', topic: 'khoang' },
+                    { label: '📍 Vị trí', topic: 'vitri' }
+                ]);
+            } else {
+                cvRenderQuick([
+                    { label: '✅ Đặt phòng ngay', topic: 'book' },
+                    { label: '🤔 Cần suy nghĩ', topic: 'think' },
+                    ...CV_QUICK_OPTIONS.filter(o => o.topic !== topic && o.topic !== 'book' && o.topic !== 'think').slice(0, 3)
+                ]);
+            }
+
+            cvChatBusy = false;
+        }, 700 + Math.random() * 500);
+    }
+
+    function cvStartChat() {
+        if (cvChatStarted) return;
+        cvChatStarted = true;
+        cvShowTyping();
+        setTimeout(() => {
+            cvHideTyping();
+            cvAddMessage(CV_CHAT_SCRIPTS.greeting, 'bot');
+            cvRenderQuick(CV_QUICK_OPTIONS);
+        }, 600);
+    }
+
+    function cvSendUserMessage() {
+        const text = cvChatInput.value.trim();
+        if (!text || cvChatBusy) return;
+        cvChatInput.value = '';
+        const topic = cvMatchTopic(text) || 'fallback';
+        cvHandleTopic(topic, text);
+    }
+
+    cvChatToggle.addEventListener('click', () => {
+        const isOpen = cvChatbot.classList.toggle('open');
+        if (isOpen) {
+            cvStartChat();
+            cvChatInput.focus();
+        }
+    });
+
+    cvChatClose.addEventListener('click', () => {
+        cvChatbot.classList.remove('open');
+    });
+
+    cvChatSend.addEventListener('click', cvSendUserMessage);
+    cvChatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') cvSendUserMessage();
+    });
 });
 
 </script>
