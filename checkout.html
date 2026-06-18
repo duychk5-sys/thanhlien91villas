@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang Thanh Toán</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #444;
+      font-size: 0.9rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4A90E2;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #4A90E2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #357ABD;
+    }
+
+    #payment-section {
+      display: none;
+      margin-top: 24px;
+      border-top: 1px solid #eee;
+      padding-top: 24px;
+    }
+
+    .qr-wrapper {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .qr-wrapper img {
+      width: 220px;
+      height: 220px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+    }
+
+    .bank-info {
+      background: #f8f8f8;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .bank-info p {
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+    .bank-info span {
+      font-weight: bold;
+      color: #222;
+    }
+
+    .transfer-content {
+      background: #FFF8E1;
+      border: 1px solid #FFD54F;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+
+    .transfer-content p {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 4px;
+    }
+
+    .transfer-content .code {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #E65100;
+      letter-spacing: 1px;
+    }
+
+    .checking {
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .checking span {
+      display: inline-block;
+      animation: spin 1.2s linear infinite;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .success-box {
+      background: #E8F5E9;
+      border: 1px solid #A5D6A7;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      display: none;
+    }
+
+    .success-box h3 {
+      color: #2E7D32;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .success-box p {
+      color: #388E3C;
+      font-size: 0.95rem;
+    }
+
+    .note {
+      font-size: 0.8rem;
+      color: #999;
+      text-align: center;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Trang Thanh Toán</h1>
+
+    <!-- Form thông tin -->
+    <div id="form-section">
+      <h2>Thông tin khách hàng</h2>
+      <label>Họ và tên: *</label>
+      <input type="text" id="name" placeholder="Nguyễn Văn A" required>
+      <label>Số điện thoại: *</label>
+      <input type="tel" id="phone" placeholder="0912345678" required>
+      <label>Email: *</label>
+      <input type="email" id="email" placeholder="email@example.com" required>
+      <label>Số tiền (VNĐ): *</label>
+      <input type="number" id="amount" placeholder="VD: 500000" required>
+      <button onclick="startPayment()">Tiến hành thanh toán</button>
+    </div>
+
+    <!-- Phần thanh toán QR -->
+    <div id="payment-section">
+      <h2>Quét mã QR để thanh toán</h2>
+      <div class="qr-wrapper">
+        <img id="qr-img" src="" alt="QR Thanh Toán">
+      </div>
+      <div class="bank-info">
+        <p>Ngân hàng: <span>TPBank</span></p>
+        <p>Số tài khoản: <span>92356181981</span></p>
+        <p>Chủ tài khoản: <span>ĐỖ ĐỨC DUY</span></p>
+        <p>Số tiền: <span id="display-amount"></span></p>
+      </div>
+      <div class="transfer-content">
+        <p>Nội dung chuyển khoản (bắt buộc):</p>
+        <p class="code" id="transfer-code"></p>
+      </div>
+      <div class="checking">
+        <span>⟳</span> Đang chờ xác nhận thanh toán...
+      </div>
+      <p class="note">Hệ thống tự động xác nhận sau khi nhận được tiền</p>
+    </div>
+
+    <!-- Thông báo thành công -->
+    <div class="success-box" id="success-box">
+      <h3>✅ Thanh toán thành công!</h3>
+      <p>Cảm ơn bạn đã thanh toán. Chúng tôi sẽ xử lý đơn hàng sớm nhất!</p>
+    </div>
+  </div>
+
+  <script>
+    const SEPAY_API_KEY = 'LKA5YIYPP2ZEHOVOP37DYSFGXLH8JSHWX6GGD9SABCHJAWV0XUQEVBCQZBJKCQMN';
+    const ACCOUNT_NUMBER = '92356181981';
+    let checkInterval = null;
+    let orderCode = '';
+    let expectedAmount = 0;
+
+    function generateCode(name) {
+      const clean = name.replace(/\s+/g, '').toUpperCase().substring(0, 6);
+      const rand = Math.floor(Math.random() * 9000) + 1000;
+      return 'DH' + clean + rand;
+    }
+
+    function formatMoney(n) {
+      return Number(n).toLocaleString('vi-VN') + ' đ';
+    }
+
+    function startPayment() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const amount = document.getElementById('amount').value.trim();
+
+      if (!name || !phone || !email || !amount) {
+        alert('Vui lòng điền đầy đủ thông tin!');
+        return;
+      }
+      if (!/^[0-9]{9,11}$/.test(phone)) {
+        alert('Số điện thoại không hợp lệ!');
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert('Email không hợp lệ!');
+        return;
+      }
+
+      orderCode = generateCode(name);
+      expectedAmount = parseInt(amount);
+
+      // Tạo QR
+      const qrUrl = `https://qr.sepay.vn/img?bank=TPBank&acc=${ACCOUNT_NUMBER}&template=compact&amount=${expectedAmount}&des=${orderCode}&showinfo=true`;
+      document.getElementById('qr-img').src = qrUrl;
+      document.getElementById('display-amount').textContent = formatMoney(expectedAmount);
+      document.getElementById('transfer-code').textContent = orderCode;
+
+      document.getElementById('form-section').style.display = 'none';
+      document.getElementById('payment-section').style.display = 'block';
+
+      // Bắt đầu kiểm tra thanh toán mỗi 5 giây
+      checkInterval = setInterval(checkPayment, 5000);
+    }
+
+    async function checkPayment() {
+      try {
+        const res = await fetch(`https://my.sepay.vn/userapi/transactions/list?account_number=${ACCOUNT_NUMBER}&limit=10`, {
+          headers: { 'Authorization': `Bearer ${SEPAY_API_KEY}` }
+        });
+        const data = await res.json();
+        if (data && data.transactions) {
+          for (const tx of data.transactions) {
+            if (
+              tx.transferAmount >= expectedAmount &&
+              tx.description && tx.description.toUpperCase().includes(orderCode)
+            ) {
+              clearInterval(checkInterval);
+              showSuccess();
+              return;
+            }
+          }
+        }
+      } catch (e) {
+        console.log('Đang kiểm tra...', e);
+      }
+    }
+
+    function showSuccess() {
+      document.getElementById('payment-section').style.display = 'none';
+      document.getElementById('success-box').style.display = 'block';
+    }
+  </script>
+</body>
+
+</html>
