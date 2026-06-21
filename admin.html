@@ -297,9 +297,7 @@
 
 <div class="container">
 
-  <div class="note-box">
-    ⚠️ Dữ liệu được đọc từ Google Sheets. Để chỉnh sửa hoặc xóa, thay đổi sẽ được lưu vào <strong>localStorage</strong> (chỉ trên máy này). Để đồng bộ thật sự, cần kết nối Google Sheets API.
-  </div>
+  <div class="note-box" id="sync-status" style="display:none"></div>
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('bookings')">📋 Đặt phòng</button>
@@ -408,6 +406,7 @@
 
 <script>
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRNCwmn_a-B870w2mogdv7yBrk5q6x0VwW2zqFCV3gNCzgDbHYtbSL6vK8GmseesSdD7tyBT5txHsMW/pub?gid=0&single=true&output=csv';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz6evUDLJXmAgztiabuxy8GCye-x9-hUJaCTc9eeDEHG7pzjepD6qRBNt9teGAs9c_H/exec';
 
 let sheetData = [];
 let localBookings = [];
@@ -592,9 +591,29 @@ function saveBooking() {
   }
 
   localStorage.setItem('tl_bookings', JSON.stringify(localBookings));
-  closeModal('booking-modal');
-  renderAll();
-  showToast(id ? 'Đã cập nhật đặt phòng' : 'Đã thêm đặt phòng mới');
+
+  // Write to Google Sheets
+  const saveBtn = document.querySelector('#booking-modal .btn-primary');
+  saveBtn.textContent = 'Đang lưu...';
+  saveBtn.disabled = true;
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'add', ...booking })
+  }).then(() => {
+    closeModal('booking-modal');
+    showToast('✅ Đã lưu vào Google Sheets!');
+    setTimeout(() => loadSheetData(), 2500);
+  }).catch(() => {
+    closeModal('booking-modal');
+    showToast('⚠️ Lưu tạm thời, kiểm tra kết nối');
+    renderAll();
+  }).finally(() => {
+    saveBtn.textContent = 'Lưu';
+    saveBtn.disabled = false;
+  });
 }
 
 function deleteBooking(id) {
