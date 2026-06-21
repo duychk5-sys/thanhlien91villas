@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Thanhlien91 Villas</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #2d6a4f;
+    --green-light: #40916c;
+    --green-pale: #d8f3dc;
+    --cream: #f8f5f0;
+    --text: #1b1b1b;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --white: #ffffff;
+    --red: #dc2626;
+    --red-pale: #fee2e2;
+    --yellow: #d97706;
+    --yellow-pale: #fef3c7;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    background: var(--green);
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  header .logo {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  header .subtitle {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-left: auto;
+  }
+
+  /* Layout */
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 6px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .tab-btn.active {
+    background: var(--green);
+    color: white;
+  }
+  .tab-btn:hover:not(.active) {
+    background: var(--green-pale);
+    color: var(--green);
+  }
+
+  /* Section */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+  .stat-card .label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .stat-card .value { font-size: 24px; font-weight: 700; color: var(--green); }
+
+  /* Toolbar */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    outline: none;
+  }
+  .search-input:focus { border-color: var(--green-light); }
+
+  .btn {
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--green); color: white; }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-outline { background: white; color: var(--text); border: 1px solid var(--border); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  /* Table */
+  .table-wrap {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    overflow: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    background: var(--cream);
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f9fafb; }
+  td { padding: 11px 14px; vertical-align: top; }
+  td.muted { color: var(--muted); }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-green { background: var(--green-pale); color: var(--green); }
+  .badge-yellow { background: var(--yellow-pale); color: var(--yellow); }
+  .badge-red { background: var(--red-pale); color: var(--red); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+  .modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 20px; color: var(--green); }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    background: white;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus { border-color: var(--green-light); }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+  /* Loading */
+  .loading {
+    text-align: center;
+    padding: 48px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .spinner {
+    display: inline-block;
+    width: 28px; height: 28px;
+    border: 3px solid var(--border);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-bottom: 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Empty */
+  .empty { text-align: center; padding: 48px; color: var(--muted); font-size: 14px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    background: var(--green);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: var(--red); }
+
+  /* Note box */
+  .note-box {
+    background: var(--yellow-pale);
+    border-left: 3px solid var(--yellow);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #78350f;
+    margin-bottom: 20px;
+  }
+
+  .actions-cell { white-space: nowrap; display: flex; gap: 6px; }
+
+  @media (max-width: 600px) {
+    .tabs { flex-direction: column; }
+    .stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">🌿 Thanhlien91 Villas</div>
+    <div class="subtitle">Admin Panel</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="note-box">
+    ⚠️ Dữ liệu được đọc từ Google Sheets. Để chỉnh sửa hoặc xóa, thay đổi sẽ được lưu vào <strong>localStorage</strong> (chỉ trên máy này). Để đồng bộ thật sự, cần kết nối Google Sheets API.
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('bookings')">📋 Đặt phòng</button>
+    <button class="tab-btn" onclick="switchTab('customers')">👥 Khách hàng</button>
+    <button class="tab-btn" onclick="switchTab('packages')">🏷️ Gói dịch vụ</button>
+  </div>
+
+  <!-- BOOKINGS TAB -->
+  <div id="tab-bookings" class="section active">
+    <div class="stats" id="booking-stats"></div>
+    <div class="toolbar">
+      <input type="text" class="search-input" id="booking-search" placeholder="Tìm theo tên, SĐT, gói..." oninput="renderBookings()">
+      <button class="btn btn-primary" onclick="openAddBooking()">+ Thêm đặt phòng</button>
+      <button class="btn btn-outline" onclick="loadSheetData()">🔄 Tải lại</button>
+    </div>
+    <div class="table-wrap">
+      <div id="bookings-table"></div>
+    </div>
+  </div>
+
+  <!-- CUSTOMERS TAB -->
+  <div id="tab-customers" class="section">
+    <div class="toolbar">
+      <input type="text" class="search-input" id="customer-search" placeholder="Tìm theo tên, SĐT..." oninput="renderCustomers()">
+    </div>
+    <div class="table-wrap">
+      <div id="customers-table"></div>
+    </div>
+  </div>
+
+  <!-- PACKAGES TAB -->
+  <div id="tab-packages" class="section">
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="openAddPackage()">+ Thêm gói</button>
+    </div>
+    <div class="table-wrap">
+      <div id="packages-table"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <h3 id="booking-modal-title">Thêm đặt phòng mới</h3>
+    <input type="hidden" id="bm-id">
+    <div class="form-group">
+      <label>Tên khách hàng *</label>
+      <input type="text" id="bm-name" placeholder="Nguyễn Văn A">
+    </div>
+    <div class="form-group">
+      <label>SĐT / Zalo *</label>
+      <input type="text" id="bm-phone" placeholder="0912345678">
+    </div>
+    <div class="form-group">
+      <label>Gói dịch vụ</label>
+      <select id="bm-package">
+        <option value="">-- Chọn gói --</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Ngày check-in</label>
+      <input type="date" id="bm-checkin">
+    </div>
+    <div class="form-group">
+      <label>Số người</label>
+      <input type="number" id="bm-people" min="1" placeholder="10">
+    </div>
+    <div class="form-group">
+      <label>Ghi chú</label>
+      <textarea id="bm-note" placeholder="Yêu cầu đặc biệt..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('booking-modal')">Hủy</button>
+      <button class="btn btn-primary" onclick="saveBooking()">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- PACKAGE MODAL -->
+<div class="modal-overlay" id="package-modal">
+  <div class="modal">
+    <h3 id="package-modal-title">Thêm gói dịch vụ</h3>
+    <input type="hidden" id="pm-id">
+    <div class="form-group">
+      <label>Tên gói *</label>
+      <input type="text" id="pm-name" placeholder="Ngày cuối tuần">
+    </div>
+    <div class="form-group">
+      <label>Giá (VNĐ/người)</label>
+      <input type="number" id="pm-price" placeholder="4890000">
+    </div>
+    <div class="form-group">
+      <label>Mô tả</label>
+      <textarea id="pm-desc" placeholder="Bao gồm..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('package-modal')">Hủy</button>
+      <button class="btn btn-primary" onclick="savePackage()">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRNCwmn_a-B870w2mogdv7yBrk5q6x0VwW2zqFCV3gNCzgDbHYtbSL6vK8GmseesSdD7tyBT5txHsMW/pub?gid=0&single=true&output=csv';
+
+let sheetData = [];
+let localBookings = [];
+let localPackages = [];
+
+// ── Init ──────────────────────────────────────────────
+function init() {
+  localBookings = JSON.parse(localStorage.getItem('tl_bookings') || '[]');
+  localPackages = JSON.parse(localStorage.getItem('tl_packages') || '[]');
+  if (localPackages.length === 0) {
+    localPackages = [
+      { id: 1, name: 'Ngày cuối tuần', price: 4890000, desc: 'Gói cuối tuần đầy đủ dịch vụ' },
+      { id: 2, name: 'Ngày trong tuần', price: 2990000, desc: 'Gói ngày thường ưu đãi' },
+      { id: 3, name: 'Yêu cầu tư vấn tổng quát', price: 0, desc: 'Khách cần tư vấn thêm' },
+    ];
+    savePackages();
+  }
+  loadSheetData();
+}
+
+// ── Load from Google Sheets ───────────────────────────
+async function loadSheetData() {
+  document.getElementById('bookings-table').innerHTML = `<div class="loading"><div class="spinner"></div><br>Đang tải dữ liệu...</div>`;
+  try {
+    const res = await fetch(SHEET_CSV + '&t=' + Date.now());
+    const text = await res.text();
+    sheetData = parseCSV(text);
+    renderAll();
+    showToast('Đã tải ' + sheetData.length + ' bản ghi từ Google Sheets');
+  } catch (e) {
+    document.getElementById('bookings-table').innerHTML = `<div class="empty">❌ Không tải được dữ liệu. Kiểm tra kết nối hoặc link Google Sheets.</div>`;
+    showToast('Lỗi tải dữ liệu', true);
+  }
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  // Skip header row (row 1 is empty, row 2 is header based on sheet structure)
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = splitCSVLine(lines[i]);
+    if (!cols[0] && !cols[2]) continue; // skip truly empty
+    rows.push({
+      id: 'sheet_' + i,
+      time: cols[0] || '',
+      package: cols[1] || '',
+      name: cols[2] || '',
+      phone: cols[3] || '',
+      checkin: cols[4] || '',
+      people: cols[5] || '',
+      note: cols[6] || '',
+      source: 'sheet'
+    });
+  }
+  return rows;
+}
+
+function splitCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { inQ = !inQ; }
+    else if (ch === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+    else { cur += ch; }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+// ── Render all ────────────────────────────────────────
+function renderAll() {
+  renderBookings();
+  renderCustomers();
+  renderPackages();
+  renderBookingStats();
+  updatePackageSelect();
+}
+
+// ── Bookings ──────────────────────────────────────────
+function allBookings() {
+  const combined = [...sheetData, ...localBookings];
+  return combined.filter(b => b.name || b.phone);
+}
+
+function renderBookings() {
+  const q = (document.getElementById('booking-search')?.value || '').toLowerCase();
+  let rows = allBookings().filter(b =>
+    !q || b.name?.toLowerCase().includes(q) || b.phone?.includes(q) || b.package?.toLowerCase().includes(q)
+  );
+
+  if (!rows.length) {
+    document.getElementById('bookings-table').innerHTML = '<div class="empty">Không có đặt phòng nào</div>';
+    return;
+  }
+
+  let html = `<table><thead><tr>
+    <th>Thời gian</th><th>Tên khách</th><th>SĐT/Zalo</th>
+    <th>Gói</th><th>Check-in</th><th>Số người</th><th>Ghi chú</th><th>Thao tác</th>
+  </tr></thead><tbody>`;
+
+  rows.forEach(b => {
+    const isLocal = b.source === 'local';
+    const checkinBadge = b.checkin ? `<span class="badge badge-green">${b.checkin}</span>` : '<span class="muted">—</span>';
+    html += `<tr>
+      <td class="muted" style="font-size:11px">${b.time || '—'}</td>
+      <td><strong>${b.name || '—'}</strong></td>
+      <td>${b.phone || '—'}</td>
+      <td>${b.package ? `<span class="badge badge-yellow">${b.package}</span>` : '—'}</td>
+      <td>${checkinBadge}</td>
+      <td>${b.people || '—'}</td>
+      <td style="max-width:180px;font-size:12px">${b.note || '—'}</td>
+      <td><div class="actions-cell">
+        ${isLocal ? `<button class="btn btn-outline btn-sm" onclick='editBooking(${JSON.stringify(b)})'>✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteBooking('${b.id}')">🗑</button>` : '<span style="font-size:11px;color:var(--muted)">Sheet</span>'}
+      </div></td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('bookings-table').innerHTML = html;
+}
+
+function renderBookingStats() {
+  const all = allBookings();
+  const today = new Date().toISOString().split('T')[0];
+  const upcoming = all.filter(b => b.checkin && b.checkin >= today).length;
+  const totalPeople = all.reduce((s, b) => s + (parseInt(b.people) || 0), 0);
+
+  document.getElementById('booking-stats').innerHTML = `
+    <div class="stat-card"><div class="label">Tổng đặt phòng</div><div class="value">${all.length}</div></div>
+    <div class="stat-card"><div class="label">Sắp đến</div><div class="value">${upcoming}</div></div>
+    <div class="stat-card"><div class="label">Tổng lượt khách</div><div class="value">${totalPeople}</div></div>
+    <div class="stat-card"><div class="label">Từ Google Sheets</div><div class="value">${sheetData.length}</div></div>
+  `;
+}
+
+function openAddBooking() {
+  document.getElementById('booking-modal-title').textContent = 'Thêm đặt phòng mới';
+  document.getElementById('bm-id').value = '';
+  ['bm-name','bm-phone','bm-checkin','bm-people','bm-note'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('bm-package').value = '';
+  openModal('booking-modal');
+}
+
+function editBooking(b) {
+  document.getElementById('booking-modal-title').textContent = 'Chỉnh sửa đặt phòng';
+  document.getElementById('bm-id').value = b.id;
+  document.getElementById('bm-name').value = b.name || '';
+  document.getElementById('bm-phone').value = b.phone || '';
+  document.getElementById('bm-package').value = b.package || '';
+  document.getElementById('bm-checkin').value = b.checkin || '';
+  document.getElementById('bm-people').value = b.people || '';
+  document.getElementById('bm-note').value = b.note || '';
+  openModal('booking-modal');
+}
+
+function saveBooking() {
+  const name = document.getElementById('bm-name').value.trim();
+  const phone = document.getElementById('bm-phone').value.trim();
+  if (!name) { showToast('Vui lòng nhập tên khách hàng', true); return; }
+
+  const id = document.getElementById('bm-id').value;
+  const booking = {
+    id: id || 'local_' + Date.now(),
+    time: new Date().toLocaleString('vi-VN'),
+    name,
+    phone,
+    package: document.getElementById('bm-package').value,
+    checkin: document.getElementById('bm-checkin').value,
+    people: document.getElementById('bm-people').value,
+    note: document.getElementById('bm-note').value,
+    source: 'local'
+  };
+
+  if (id) {
+    const idx = localBookings.findIndex(b => b.id === id);
+    if (idx >= 0) localBookings[idx] = booking;
+  } else {
+    localBookings.unshift(booking);
+  }
+
+  localStorage.setItem('tl_bookings', JSON.stringify(localBookings));
+  closeModal('booking-modal');
+  renderAll();
+  showToast(id ? 'Đã cập nhật đặt phòng' : 'Đã thêm đặt phòng mới');
+}
+
+function deleteBooking(id) {
+  if (!confirm('Xóa đặt phòng này?')) return;
+  localBookings = localBookings.filter(b => b.id !== id);
+  localStorage.setItem('tl_bookings', JSON.stringify(localBookings));
+  renderAll();
+  showToast('Đã xóa đặt phòng');
+}
+
+// ── Customers ─────────────────────────────────────────
+function renderCustomers() {
+  const q = (document.getElementById('customer-search')?.value || '').toLowerCase();
+  const all = allBookings();
+
+  // Deduplicate by phone
+  const map = {};
+  all.forEach(b => {
+    const key = b.phone || b.name;
+    if (!map[key]) map[key] = { name: b.name, phone: b.phone, bookings: 0, lastCheckin: '' };
+    map[key].bookings++;
+    if (b.checkin > map[key].lastCheckin) map[key].lastCheckin = b.checkin;
+  });
+
+  let customers = Object.values(map).filter(c =>
+    !q || c.name?.toLowerCase().includes(q) || c.phone?.includes(q)
+  );
+
+  if (!customers.length) {
+    document.getElementById('customers-table').innerHTML = '<div class="empty">Không có khách hàng nào</div>';
+    return;
+  }
+
+  customers.sort((a, b) => b.bookings - a.bookings);
+
+  let html = `<table><thead><tr>
+    <th>#</th><th>Tên khách</th><th>SĐT/Zalo</th><th>Số lần đặt</th><th>Check-in gần nhất</th>
+  </tr></thead><tbody>`;
+
+  customers.forEach((c, i) => {
+    html += `<tr>
+      <td class="muted">${i + 1}</td>
+      <td><strong>${c.name || '—'}</strong></td>
+      <td>${c.phone || '—'}</td>
+      <td><span class="badge ${c.bookings > 1 ? 'badge-green' : 'badge-yellow'}">${c.bookings} lần</span></td>
+      <td>${c.lastCheckin || '—'}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('customers-table').innerHTML = html;
+}
+
+// ── Packages ──────────────────────────────────────────
+function renderPackages() {
+  if (!localPackages.length) {
+    document.getElementById('packages-table').innerHTML = '<div class="empty">Chưa có gói dịch vụ nào</div>';
+    return;
+  }
+
+  let html = `<table><thead><tr>
+    <th>Tên gói</th><th>Giá/người</th><th>Mô tả</th><th>Thao tác</th>
+  </tr></thead><tbody>`;
+
+  localPackages.forEach(p => {
+    html += `<tr>
+      <td><strong>${p.name}</strong></td>
+      <td>${p.price ? p.price.toLocaleString('vi-VN') + ' đ' : 'Liên hệ'}</td>
+      <td style="font-size:12px;color:var(--muted)">${p.desc || '—'}</td>
+      <td><div class="actions-cell">
+        <button class="btn btn-outline btn-sm" onclick='editPackage(${JSON.stringify(p)})'>✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deletePackage(${p.id})">🗑</button>
+      </div></td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('packages-table').innerHTML = html;
+}
+
+function updatePackageSelect() {
+  const sel = document.getElementById('bm-package');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Chọn gói --</option>';
+  localPackages.forEach(p => {
+    sel.innerHTML += `<option value="${p.name}" ${cur === p.name ? 'selected' : ''}>${p.name}</option>`;
+  });
+}
+
+function openAddPackage() {
+  document.getElementById('package-modal-title').textContent = 'Thêm gói dịch vụ';
+  document.getElementById('pm-id').value = '';
+  ['pm-name','pm-price','pm-desc'].forEach(id => document.getElementById(id).value = '');
+  openModal('package-modal');
+}
+
+function editPackage(p) {
+  document.getElementById('package-modal-title').textContent = 'Chỉnh sửa gói';
+  document.getElementById('pm-id').value = p.id;
+  document.getElementById('pm-name').value = p.name || '';
+  document.getElementById('pm-price').value = p.price || '';
+  document.getElementById('pm-desc').value = p.desc || '';
+  openModal('package-modal');
+}
+
+function savePackage() {
+  const name = document.getElementById('pm-name').value.trim();
+  if (!name) { showToast('Vui lòng nhập tên gói', true); return; }
+
+  const id = document.getElementById('pm-id').value;
+  const pkg = {
+    id: id ? parseInt(id) : Date.now(),
+    name,
+    price: parseInt(document.getElementById('pm-price').value) || 0,
+    desc: document.getElementById('pm-desc').value
+  };
+
+  if (id) {
+    const idx = localPackages.findIndex(p => p.id == id);
+    if (idx >= 0) localPackages[idx] = pkg;
+  } else {
+    localPackages.push(pkg);
+  }
+
+  savePackages();
+  closeModal('package-modal');
+  renderAll();
+  showToast(id ? 'Đã cập nhật gói' : 'Đã thêm gói mới');
+}
+
+function deletePackage(id) {
+  if (!confirm('Xóa gói này?')) return;
+  localPackages = localPackages.filter(p => p.id !== id);
+  savePackages();
+  renderAll();
+  showToast('Đã xóa gói');
+}
+
+function savePackages() {
+  localStorage.setItem('tl_packages', JSON.stringify(localPackages));
+}
+
+// ── Tabs ──────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── Modal ─────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// ── Toast ─────────────────────────────────────────────
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+init();
+</script>
+</body>
+</html>
