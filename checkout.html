@@ -284,21 +284,12 @@
 
     async function checkPayment() {
       try {
-        const res = await fetch(`https://my.sepay.vn/userapi/transactions/list?account_number=${ACCOUNT_NUMBER}&limit=10`, {
-          headers: { 'Authorization': `Bearer ${SEPAY_API_KEY}` }
-        });
+        const res = await fetch(`/.netlify/functions/check-payment?order_id=${orderCode}&amount=${expectedAmount}`);
         const data = await res.json();
-        if (data && data.transactions) {
-          for (const tx of data.transactions) {
-            if (
-              tx.transferAmount >= expectedAmount &&
-              tx.description && tx.description.toUpperCase().includes(orderCode)
-            ) {
-              clearInterval(checkInterval);
-              showSuccess();
-              return;
-            }
-          }
+
+        if (data.status === 'paid') {
+          clearInterval(checkInterval);
+          showSuccess();
         }
       } catch (e) {
         console.log('Đang kiểm tra...', e);
