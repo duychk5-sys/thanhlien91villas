@@ -1,306 +1,378 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trang Thanh Toán</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đặt chỗ — Thanhlien91 Villas</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+.card {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 28px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+}
+.logo {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d6a4f;
+  margin-bottom: 6px;
+}
+.logo-sub {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 24px;
+}
+h2 { font-size: 1.1rem; color: #333; margin-bottom: 18px; }
+label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 9px;
+  font-size: 0.97rem;
+  margin-bottom: 15px;
+  background: #fafafa;
+  transition: border 0.15s;
+  color: #222;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #40916c;
+  background: #fff;
+}
+input[readonly] {
+  background: #f0fdf4;
+  color: #2d6a4f;
+  font-weight: 600;
+  cursor: default;
+}
+.package-price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.price-badge {
+  background: #d8f3dc;
+  color: #2d6a4f;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.price-note { font-size: 0.8rem; color: #888; }
+button.submit-btn {
+  width: 100%;
+  padding: 15px;
+  background: #2d6a4f;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.15s;
+}
+button.submit-btn:hover:not(:disabled) { background: #40916c; }
+button.submit-btn:disabled { background: #aaa; cursor: not-allowed; }
 
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      padding: 20px;
-    }
+/* Payment section */
+#payment-section { display: none; }
+.divider { border: none; border-top: 1.5px solid #f0f0f0; margin: 24px 0; }
+.qr-center { text-align: center; margin-bottom: 16px; }
+.qr-center img { width: 220px; height: 220px; border: 1px solid #eee; border-radius: 10px; }
+.bank-box {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+}
+.bank-box p { margin-bottom: 6px; color: #555; }
+.bank-box span { font-weight: 700; color: #222; }
+.transfer-box {
+  background: #fff8e1;
+  border: 1.5px solid #ffd54f;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.transfer-box p { font-size: 0.82rem; color: #777; margin-bottom: 4px; }
+.transfer-code {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #e65100;
+  letter-spacing: 2px;
+  word-break: break-all;
+}
+.status-bar {
+  text-align: center;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.status-pending {
+  background: #fff3e0;
+  color: #e65100;
+  animation: pulse 2s infinite;
+}
+.status-paid { background: #e8f5e9; color: #2e7d32; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+.note { font-size: 0.78rem; color: #aaa; text-align: center; }
 
-    .container {
-      max-width: 500px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    }
+/* Success */
+#success-section {
+  display: none;
+  text-align: center;
+  padding: 20px 0;
+}
+.success-icon { font-size: 3.5rem; margin-bottom: 12px; }
+.success-title { font-size: 1.3rem; font-weight: 700; color: #2d6a4f; margin-bottom: 8px; }
+.success-msg { font-size: 0.9rem; color: #555; line-height: 1.6; }
+.order-ref { font-size: 0.82rem; color: #aaa; margin-top: 10px; }
 
-    h1 {
-      font-size: 1.6rem;
-      margin-bottom: 20px;
-      color: #222;
-    }
-
-    h2 {
-      font-size: 1.1rem;
-      margin-bottom: 16px;
-      color: #333;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 6px;
-      color: #444;
-      font-size: 0.9rem;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      margin-bottom: 16px;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #4A90E2;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #4A90E2;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #357ABD;
-    }
-
-    #payment-section {
-      display: none;
-      margin-top: 24px;
-      border-top: 1px solid #eee;
-      padding-top: 24px;
-    }
-
-    .qr-wrapper {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .qr-wrapper img {
-      width: 220px;
-      height: 220px;
-      border: 1px solid #eee;
-      border-radius: 8px;
-    }
-
-    .bank-info {
-      background: #f8f8f8;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .bank-info p {
-      margin-bottom: 8px;
-      font-size: 0.95rem;
-      color: #444;
-    }
-
-    .bank-info span {
-      font-weight: bold;
-      color: #222;
-    }
-
-    .transfer-content {
-      background: #FFF8E1;
-      border: 1px solid #FFD54F;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
-    }
-
-    .transfer-content p {
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 4px;
-    }
-
-    .transfer-content .code {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #E65100;
-      letter-spacing: 1px;
-    }
-
-    .checking {
-      text-align: center;
-      color: #888;
-      font-size: 0.9rem;
-      margin-bottom: 12px;
-    }
-
-    .checking span {
-      display: inline-block;
-      animation: spin 1.2s linear infinite;
-      margin-right: 6px;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .success-box {
-      background: #E8F5E9;
-      border: 1px solid #A5D6A7;
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
-      display: none;
-    }
-
-    .success-box h3 {
-      color: #2E7D32;
-      font-size: 1.2rem;
-      margin-bottom: 8px;
-    }
-
-    .success-box p {
-      color: #388E3C;
-      font-size: 0.95rem;
-    }
-
-    .note {
-      font-size: 0.8rem;
-      color: #999;
-      text-align: center;
-      margin-top: 8px;
-    }
-  </style>
+/* Error */
+.error-msg { color: #dc2626; font-size: 0.82rem; margin-top: -10px; margin-bottom: 10px; }
+</style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>Trang Thanh Toán</h1>
+<div class="card">
+  <div class="logo">🌿 Thanhlien91 Villas</div>
+  <div class="logo-sub">Nghỉ dưỡng khoáng nóng</div>
 
-    <!-- Form thông tin -->
-    <div id="form-section">
-      <h2>Thông tin khách hàng</h2>
-      <label>Họ và tên: *</label>
-      <input type="text" id="name" placeholder="Nguyễn Văn A" required>
-      <label>Số điện thoại: *</label>
-      <input type="tel" id="phone" placeholder="0912345678" required>
-      <label>Email: *</label>
-      <input type="email" id="email" placeholder="email@example.com" required>
-      <label>Số tiền (VNĐ): *</label>
-      <input type="number" id="amount" placeholder="VD: 500000" required>
-      <button onclick="startPayment()">Tiến hành thanh toán</button>
+  <!-- FORM SECTION -->
+  <div id="form-section">
+    <h2>Thông tin đặt chỗ</h2>
+
+    <label>Gói dịch vụ *</label>
+    <select id="pkg" onchange="onPackageChange()">
+      <option value="">-- Chọn gói --</option>
+      <option value="Ngày cuối tuần" data-price="4890000">Ngày cuối tuần — 4.890.000 đ/người</option>
+      <option value="Ngày trong tuần" data-price="2990000">Ngày trong tuần — 2.990.000 đ/người</option>
+      <option value="Gói đặc biệt" data-price="6500000">Gói đặc biệt — 6.500.000 đ/người</option>
+    </select>
+
+    <div id="price-display" style="display:none; margin-bottom:15px;">
+      <label>Số tiền thanh toán</label>
+      <div class="package-price">
+        <div class="price-badge" id="price-badge">—</div>
+        <div class="price-note">Cố định theo gói, không thể thay đổi</div>
+      </div>
     </div>
 
-    <!-- Phần thanh toán QR -->
-    <div id="payment-section">
-      <h2>Quét mã QR để thanh toán</h2>
-      <div class="qr-wrapper">
-        <img id="qr-img" src="" alt="QR Thanh Toán">
-      </div>
-      <div class="bank-info">
-        <p>Ngân hàng: <span>TPBank</span></p>
-        <p>Số tài khoản: <span>92356181981</span></p>
-        <p>Chủ tài khoản: <span>ĐỖ ĐỨC DUY</span></p>
-        <p>Số tiền: <span id="display-amount"></span></p>
-      </div>
-      <div class="transfer-content">
-        <p>Nội dung chuyển khoản (bắt buộc):</p>
-        <p class="code" id="transfer-code"></p>
-      </div>
-      <div class="checking">
-        <span>⟳</span> Đang chờ xác nhận thanh toán...
-      </div>
-      <p class="note">Hệ thống tự động xác nhận sau khi nhận được tiền</p>
-    </div>
+    <label>Họ và tên *</label>
+    <input type="text" id="name" placeholder="Nguyễn Văn A" autocomplete="name">
 
-    <!-- Thông báo thành công -->
-    <div class="success-box" id="success-box">
-      <h3>✅ Thanh toán thành công!</h3>
-      <p>Cảm ơn bạn đã thanh toán. Chúng tôi sẽ xử lý đơn hàng sớm nhất!</p>
-    </div>
+    <label>Số điện thoại *</label>
+    <input type="tel" id="phone" placeholder="0912 345 678" autocomplete="tel">
+
+    <label>Email</label>
+    <input type="email" id="email" placeholder="email@example.com" autocomplete="email">
+
+    <label>Ghi chú</label>
+    <textarea id="note" placeholder="Yêu cầu đặc biệt, ngày check-in mong muốn..." rows="3"></textarea>
+
+    <div id="form-error" class="error-msg" style="display:none"></div>
+    <button class="submit-btn" id="submit-btn" onclick="handleSubmit()">Tiến hành thanh toán →</button>
   </div>
 
-  <script>
-    const SEPAY_API_KEY = 'LKA5YIYPP2ZEHOVOP37DYSFGXLH8JSHWX6GGD9SABCHJAWV0XUQEVBCQZBJKCQMN';
-    const ACCOUNT_NUMBER = '92356181981';
-    let checkInterval = null;
-    let orderCode = '';
-    let expectedAmount = 0;
+  <!-- PAYMENT SECTION -->
+  <div id="payment-section">
+    <h2>Quét mã QR thanh toán</h2>
+    <div class="qr-center">
+      <img id="qr-img" src="" alt="QR thanh toán">
+    </div>
+    <div class="bank-box">
+      <p>Ngân hàng: <span id="bank-name">TPBank</span></p>
+      <p>Số tài khoản: <span id="bank-acc">—</span></p>
+      <p>Chủ tài khoản: <span id="bank-owner">—</span></p>
+      <p>Số tiền: <span id="pay-amount" style="color:#2d6a4f;font-size:1.05rem">—</span></p>
+    </div>
+    <div class="transfer-box">
+      <p>⚠️ Nội dung chuyển khoản (bắt buộc ghi đúng):</p>
+      <div class="transfer-code" id="transfer-code">—</div>
+    </div>
+    <div class="status-bar status-pending" id="status-bar">
+      ⏳ Đang chờ xác nhận thanh toán...
+    </div>
+    <p class="note">Hệ thống tự động xác nhận trong vòng 30 giây sau khi chuyển khoản thành công</p>
+  </div>
 
-    function generateCode(name) {
-      const clean = name.replace(/\s+/g, '').toUpperCase().substring(0, 6);
-      const rand = Math.floor(Math.random() * 9000) + 1000;
-      return 'DH' + clean + rand;
+  <!-- SUCCESS SECTION -->
+  <div id="success-section">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Thanh toán thành công!</div>
+    <div class="success-msg">
+      Cảm ơn bạn đã đặt chỗ tại <strong>Thanhlien91 Villas</strong>.<br>
+      Chúng tôi sẽ liên hệ xác nhận lịch nghỉ dưỡng trong vòng 24 giờ.
+    </div>
+    <div class="order-ref">Mã đặt chỗ: <strong id="success-order-id">—</strong></div>
+  </div>
+</div>
+
+<script>
+const PACKAGES = {
+  'Ngày cuối tuần': 4890000,
+  'Ngày trong tuần': 2990000,
+  'Gói đặc biệt': 6500000,
+};
+
+let currentOrderId = '';
+let currentAmount = 0;
+let pollTimer = null;
+let pollCount = 0;
+const MAX_POLL = 120; // 10 phút (5s x 120)
+
+function formatMoney(n) {
+  return Number(n).toLocaleString('vi-VN') + ' đ';
+}
+
+function onPackageChange() {
+  const sel = document.getElementById('pkg');
+  const opt = sel.options[sel.selectedIndex];
+  const price = parseInt(opt.getAttribute('data-price')) || 0;
+  const display = document.getElementById('price-display');
+
+  if (price) {
+    document.getElementById('price-badge').textContent = formatMoney(price);
+    display.style.display = 'block';
+  } else {
+    display.style.display = 'none';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('form-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function clearError() {
+  const el = document.getElementById('form-error');
+  el.style.display = 'none';
+}
+
+async function handleSubmit() {
+  clearError();
+
+  const pkg = document.getElementById('pkg').value;
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const note = document.getElementById('note').value.trim();
+
+  if (!pkg) return showError('Vui lòng chọn gói dịch vụ');
+  if (!name) return showError('Vui lòng nhập họ tên');
+  if (!phone || !/^[0-9]{9,11}$/.test(phone.replace(/\s/g, ''))) {
+    return showError('Số điện thoại không hợp lệ');
+  }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return showError('Email không hợp lệ');
+  }
+
+  const amount = PACKAGES[pkg];
+  if (!amount) return showError('Gói không hợp lệ');
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Đang xử lý...';
+
+  try {
+    const res = await fetch('/.netlify/functions/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, email, packageName: pkg, amount, note }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || 'Tạo đơn thất bại');
     }
 
-    function formatMoney(n) {
-      return Number(n).toLocaleString('vi-VN') + ' đ';
+    currentOrderId = data.orderId;
+    currentAmount = data.amount;
+
+    showPaymentSection(data);
+
+  } catch (e) {
+    showError('Lỗi: ' + e.message + '. Vui lòng thử lại.');
+    btn.disabled = false;
+    btn.textContent = 'Tiến hành thanh toán →';
+  }
+}
+
+function showPaymentSection(data) {
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('payment-section').style.display = 'block';
+
+  // Thông tin ngân hàng từ server
+  document.getElementById('bank-name').textContent = data.bankName || 'TPBank';
+  document.getElementById('bank-acc').textContent = data.bankAccount || '';
+  document.getElementById('bank-owner').textContent = data.accountName || '';
+  document.getElementById('pay-amount').textContent = formatMoney(data.amount);
+  document.getElementById('transfer-code').textContent = data.transferContent;
+
+  // QR từ Sepay
+  const qrUrl = `https://qr.sepay.vn/img?bank=${encodeURIComponent(data.bankName || 'TPBank')}&acc=${data.bankAccount}&template=compact&amount=${data.amount}&des=${encodeURIComponent(data.transferContent)}&showinfo=true`;
+  document.getElementById('qr-img').src = qrUrl;
+
+  // Bắt đầu polling
+  pollCount = 0;
+  pollTimer = setInterval(pollPaymentStatus, 5000);
+}
+
+async function pollPaymentStatus() {
+  pollCount++;
+  if (pollCount > MAX_POLL) {
+    clearInterval(pollTimer);
+    document.getElementById('status-bar').textContent = '⏰ Quá thời gian chờ. Liên hệ hỗ trợ nếu đã thanh toán.';
+    document.getElementById('status-bar').className = 'status-bar';
+    return;
+  }
+
+  try {
+    const res = await fetch(`/.netlify/functions/check-payment?order_id=${currentOrderId}&amount=${currentAmount}`);
+    const data = await res.json();
+
+    if (data.status === 'DA_THANH_TOAN' || data.status === 'paid') {
+      clearInterval(pollTimer);
+      showSuccess();
     }
+  } catch (e) {
+    // Ignore network errors, keep polling
+    console.log('Poll error:', e.message);
+  }
+}
 
-    function startPayment() {
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const amount = document.getElementById('amount').value.trim();
-
-      if (!name || !phone || !email || !amount) {
-        alert('Vui lòng điền đầy đủ thông tin!');
-        return;
-      }
-      if (!/^[0-9]{9,11}$/.test(phone)) {
-        alert('Số điện thoại không hợp lệ!');
-        return;
-      }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert('Email không hợp lệ!');
-        return;
-      }
-
-      orderCode = generateCode(name);
-      expectedAmount = parseInt(amount);
-
-      // Tạo QR
-      const qrUrl = `https://qr.sepay.vn/img?bank=TPBank&acc=${ACCOUNT_NUMBER}&template=compact&amount=${expectedAmount}&des=${orderCode}&showinfo=true`;
-      document.getElementById('qr-img').src = qrUrl;
-      document.getElementById('display-amount').textContent = formatMoney(expectedAmount);
-      document.getElementById('transfer-code').textContent = orderCode;
-
-      document.getElementById('form-section').style.display = 'none';
-      document.getElementById('payment-section').style.display = 'block';
-
-      // Bắt đầu kiểm tra thanh toán mỗi 5 giây
-      checkInterval = setInterval(checkPayment, 5000);
-    }
-
-    async function checkPayment() {
-      try {
-        const res = await fetch(`/.netlify/functions/check-payment?order_id=${orderCode}&amount=${expectedAmount}`);
-        const data = await res.json();
-
-        if (data.status === 'paid') {
-          clearInterval(checkInterval);
-          showSuccess();
-        }
-      } catch (e) {
-        console.log('Đang kiểm tra...', e);
-      }
-    }
-
-    function showSuccess() {
-      document.getElementById('payment-section').style.display = 'none';
-      document.getElementById('success-box').style.display = 'block';
-    }
-  </script>
+function showSuccess() {
+  document.getElementById('payment-section').style.display = 'none';
+  document.getElementById('success-section').style.display = 'block';
+  document.getElementById('success-order-id').textContent = currentOrderId;
+}
+</script>
 </body>
-
 </html>
