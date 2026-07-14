@@ -171,8 +171,8 @@ button.submit-btn:disabled { background: #aaa; cursor: not-allowed; }
     <select id="pkg" onchange="onPackageChange()">
       <option value="">-- Chọn gói --</option>
       <option value="Ngày cuối tuần" data-price="4890000">Ngày cuối tuần — 4.890.000 đ/người</option>
-<option value="Ngày trong tuần" data-price="2990000">Ngày trong tuần — 2.990.000 đ/người</option>
-<option value="Gói đặc biệt" data-price="6500000">Gói đặc biệt — 6.500.000 đ/người</option>
+      <option value="Ngày trong tuần" data-price="2990000">Ngày trong tuần — 2.990.000 đ/người</option>
+      <option value="Gói đặc biệt" data-price="6500000">Gói đặc biệt — 6.500.000 đ/người</option>
     </select>
 
     <div id="price-display" style="display:none; margin-bottom:15px;">
@@ -329,18 +329,15 @@ function showPaymentSection(data) {
   document.getElementById('form-section').style.display = 'none';
   document.getElementById('payment-section').style.display = 'block';
 
-  // Thông tin ngân hàng từ server
   document.getElementById('bank-name').textContent = data.bankName || 'TPBank';
   document.getElementById('bank-acc').textContent = data.bankAccount || '';
   document.getElementById('bank-owner').textContent = data.accountName || '';
   document.getElementById('pay-amount').textContent = formatMoney(data.amount);
   document.getElementById('transfer-code').textContent = data.transferContent;
 
-  // QR từ Sepay
   const qrUrl = `https://qr.sepay.vn/img?bank=${encodeURIComponent(data.bankName || 'TPBank')}&acc=${data.bankAccount}&template=compact&amount=${data.amount}&des=${encodeURIComponent(data.transferContent)}&showinfo=true`;
   document.getElementById('qr-img').src = qrUrl;
 
-  // Bắt đầu polling
   pollCount = 0;
   pollTimer = setInterval(pollPaymentStatus, 5000);
 }
@@ -363,7 +360,6 @@ async function pollPaymentStatus() {
       showSuccess();
     }
   } catch (e) {
-    // Ignore network errors, keep polling
     console.log('Poll error:', e.message);
   }
 }
