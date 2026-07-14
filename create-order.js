@@ -3,7 +3,7 @@
 
 const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbwSKXfOS23CyNYjZ3P6329D91NGXuTFNxJso1PsAlCCuFcogv8zogrsXo6ia9lIHa4w/exec';
 
-// Giá cố định theo gói — khớp với B column trong sheet và select options ở frontend
+// Giá cố định theo gói — khớp với select options ở frontend
 const PACKAGES = {
   'Ngày cuối tuần': 4890000,
   'Ngày trong tuần': 2990000,
@@ -24,13 +24,14 @@ function getPackageInfo(packageName) {
   const canonical = Object.keys(PACKAGES).find((key) => normalizePackageName(key) === normalized);
   if (canonical) return { packageName: canonical, amount: PACKAGES[canonical] };
 
+  // Fallback fuzzy matches to tolerate variants
   if (normalized.includes('ngay trong tuan') || normalized.includes('trong tuan') || normalized.includes('ngaytrongtuan')) {
     return { packageName: 'Ngày trong tuần', amount: PACKAGES['Ngày trong tuần'] };
   }
   if (normalized.includes('ngay cuoi tuan') || normalized.includes('cuoi tuan') || normalized.includes('cuoituan')) {
     return { packageName: 'Ngày cuối tuần', amount: PACKAGES['Ngày cuối tuần'] };
   }
-  if (normalized.includes('goi dac biet') || normalized.includes('dac biet') || normalized.includes('gói đặc biệt')) {
+  if (normalized.includes('goi dac biet') || normalized.includes('dac biet') || normalized.includes('goi dac biet')) {
     return { packageName: 'Gói đặc biệt', amount: PACKAGES['Gói đặc biệt'] };
   }
 
