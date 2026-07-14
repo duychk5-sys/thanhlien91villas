@@ -1,82 +1,70 @@
 // netlify/functions/create-order.js
-// Tạo đơn PENDING → ghi vào Google Sheets qua Apps Script
+const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbwSKXfOS23CyNYjZ3P6329D91NGXuTFNxJso1PsAlCCuFcogv8zogrsXo6ia9lIHa4w/exec';
 
-const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL;
-
-// Giá cố định theo gói — khớp với B column trong sheet
 const PACKAGES = {
-  'Ngày cuối tuần (4.890k)': 4890000,
-  'Ngày trong tuần (2.990k)': 2990000,
+  'Ngày cuối tuần': 4890000,
+  'Ngày trong tuần': 2990000,
+  'Gói đặc biệt': 6500000,
 };
 
-exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
-  };
+function normalizePackageName(value) {
+  return String(value || '')
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+}
 
+function getPackageInfo(packageName) {
+  const normalized = normalizePackageName(packageName);
+  const canonical = Object.keys(PACKAGES).find((key) => normalizePackageName(key) === normalized);
+  if (canonical) return { packageName: canonical, amount: PACKAGES[canonical] };
+
+  if (normalized.includes('ngay trong tuan') || normalized.includes('trong tuan')) {
+    return { packageName: 'Ngày trong tuần', amount: PACKAGES['Ngày trong tuần'] };
+  }
+  if (normalized.includes('ngay cuoi tuan') || normalized.includes('cuoi tuan')) {
+    return { packageName: 'Ngày cuối tuần', amount: PACKAGES['Ngày cuối tuần'] };
+  }
+  if (normalized.includes('goi dac biet') || normalized.includes('dac biet')) {
+    return { packageName: 'Gói đặc biệt', amount: PACKAGES['Gói đặc biệt'] };
+  }
+
+  return null;
+}
+
+exports.handler = async (event) => {
+  const headers = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Content-Type': 'application/json' };
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   let body;
-  try { body = JSON.parse(event.body); }
-  catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
+  try { body = JSON.parse(event.body); } catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
 
   const { name, phone, email, packageName, checkinDate, soNguoi, note } = body;
+  if (!name || !phone || !packageName) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Thiếu thông tin bắt buộc: tên, SĐT, gói' }) };
 
-  // Validate bắt buộc
-  if (!name || !phone || !packageName) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Thiếu thông tin bắt buộc: tên, SĐT, gói' }) };
-  }
+  const packageInfo = getPackageInfo(packageName);
+  if (!packageInfo) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Gói không hợp lệ: ' + packageName }) };
 
-  // Server-side validate số tiền theo gói — client KHÔNG được tự gửi amount
-  const amount = PACKAGES[packageName];
-  if (!amount) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Gói không hợp lệ: ' + packageName }) };
-  }
-
-  // Tạo mã đơn unique: TL + timestamp 8 số
+  const amount = packageInfo.amount;
+  const canonicalPackageName = packageInfo.packageName;
   const orderId = 'TL' + Date.now().toString().slice(-8);
   const transferContent = orderId;
 
-  const orderData = {
-    action: 'createOrder',
-    orderId,
-    name,
-    phone,
-    email: email || '',
-    packageName,
-    amount,
-    transferContent,
-    checkinDate: checkinDate || '',
-    soNguoi: soNguoi || '',
-    note: note || '',
-  };
+  const orderData = { action: 'createOrder', orderId, name, phone, email: email||'', packageName: canonicalPackageName, amount, transferContent, checkinDate: checkinDate||'', soNguoi: soNguoi||'', note: note||'' };
 
-  // Ghi vào Google Sheets qua Apps Script
   try {
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData),
-    });
+    const response = await fetch(APPS_SCRIPT_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(orderData) });
+    const responseText = await response.text();
+    let responseJson = null;
+    try { responseJson = JSON.parse(responseText); } catch {}
+    if (!response.ok || (responseJson && responseJson.success === false)) throw new Error(responseJson?.error || responseText || 'Apps Script write failed');
   } catch (e) {
     console.error('Apps Script write error:', e.message);
-    // Vẫn tiếp tục trả QR cho khách — log lỗi để debug
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Không thể tạo đơn hàng. Vui lòng thử lại sau.' }) };
   }
 
-  return {
-    statusCode: 200,
-    headers,
-    body: JSON.stringify({
-      success: true,
-      orderId,
-      transferContent,
-      amount,
-      bankAccount: process.env.BANK_ACCOUNT || '',
-      bankName: process.env.BANK_NAME || 'TPBank',
-      accountName: process.env.ACCOUNT_NAME || '',
-    }),
-  };
+  return { statusCode: 200, headers, body: JSON.stringify({ success:true, orderId, transferContent, amount, bankAccount: process.env.BANK_ACCOUNT||'', bankName: process.env.BANK_NAME||'TPBank', accountName: process.env.ACCOUNT_NAME||'' }) };
 };
